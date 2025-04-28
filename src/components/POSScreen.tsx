@@ -3,10 +3,20 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "./PhoneInput";
 import { Phone } from "lucide-react";
+import { detectCarrier } from "../utils/phoneUtils";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
+
+const carrierLogos = {
+  TIM: "https://logodownload.org/wp-content/uploads/2014/02/tim-logo-1.png",
+  VIVO: "https://logodownload.org/wp-content/uploads/2014/02/vivo-logo-0.png",
+  CLARO: "https://logodownload.org/wp-content/uploads/2014/02/claro-logo-0.png",
+  OI: "https://logodownload.org/wp-content/uploads/2014/02/oi-logo-0.png"
+};
 
 const POSScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
+  const carrier = detectCarrier(phoneNumber);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -35,12 +45,22 @@ const POSScreen = () => {
         />
       </div>
       
-      {/* Display area for entered number */}
-      <div className="text-sm text-gray-500 mb-2">
-        {phoneNumber ? 
-          "Telefone inserido:" : 
-          "Aguardando entrada..."
-        }
+      {/* Display area for carrier logo or status */}
+      <div className="flex flex-col items-center">
+        {carrier ? (
+          <Avatar className="w-24 h-12 rounded-none bg-transparent">
+            <AvatarImage 
+              src={carrierLogos[carrier]} 
+              alt={carrier} 
+              className="object-contain"
+            />
+            <AvatarFallback>{carrier}</AvatarFallback>
+          </Avatar>
+        ) : (
+          <div className="text-sm text-gray-500">
+            {phoneNumber ? "Identificando operadora..." : "Aguardando entrada..."}
+          </div>
+        )}
       </div>
     </div>
   );
