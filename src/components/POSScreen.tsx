@@ -29,20 +29,6 @@ const POSScreen = () => {
           "Aguardando entrada..."
         }
       </div>
-      
-      {/* Keypad simulation visual (just a hint, no actual functionality) */}
-      <div className="mt-6 w-full">
-        <div className="grid grid-cols-3 gap-2">
-          {[1,2,3,4,5,6,7,8,9,'*',0,'#'].map((key, index) => (
-            <div 
-              key={index} 
-              className="py-2 rounded-md bg-gray-200 text-center text-gray-700 text-sm"
-            >
-              {key}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };
