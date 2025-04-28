@@ -1,10 +1,23 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import PhoneInput from "./PhoneInput";
 import { Phone } from "lucide-react";
 
 const POSScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && phoneNumber.replace(/\D/g, "").length >= 10) {
+        navigate("/portfolio");
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
+  }, [phoneNumber, navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center bg-gray-50 p-4 h-full max-w-sm mx-auto rounded-lg shadow-sm border border-gray-200">
