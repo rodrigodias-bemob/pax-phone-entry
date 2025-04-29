@@ -1,14 +1,13 @@
-
 /**
  * Aplicativo de Recarga para Terminal POS PAX D230
  * SDK Prolin 3.5
  */
 
-#include <posapi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "xui.h"
+#include "posutils.h" // Incluímos o novo arquivo de cabeçalho
 
 // Definições de tamanho da tela
 #define SCREEN_WIDTH 240
