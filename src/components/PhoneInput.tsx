@@ -34,12 +34,28 @@ const PhoneInput = ({ value, onChange }: PhoneInputProps) => {
     
     onChange(formattedValue);
   };
+  
+  // Manipular eventos de tecla para terminais POS
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Permitir apenas dígitos, backspace e teclas de navegação
+    if (
+      !/[0-9]/.test(e.key) && 
+      e.key !== "Backspace" && 
+      e.key !== "Delete" && 
+      e.key !== "ArrowLeft" && 
+      e.key !== "ArrowRight" &&
+      e.key !== "Enter"
+    ) {
+      e.preventDefault();
+    }
+  };
 
   return (
     <input
       type="tel"
       value={value}
       onChange={handleChange}
+      onKeyDown={handleKeyDown}
       className="w-full p-3 border border-gray-300 rounded-md bg-white text-lg text-center font-medium"
       placeholder="(xx)xxxxx-xxxx"
       inputMode="numeric"

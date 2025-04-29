@@ -20,8 +20,15 @@ const POSScreen = () => {
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Tecla verde (Enter) para avançar com número válido
       if (event.key === "Enter" && phoneNumber.replace(/\D/g, "").length >= 10) {
         navigate("/portfolio");
+      }
+      
+      // Tecla vermelha (ESC) - não faz nada nesta tela pois é a inicial
+      if (event.key === "Escape") {
+        // Em ambiente real poderia exibir menu ou encerrar aplicação
+        console.log("Tecla ESC pressionada na tela inicial");
       }
     };
 
@@ -62,6 +69,13 @@ const POSScreen = () => {
           </div>
         )}
       </div>
+      
+      {/* Instruções para terminal PAX */}
+      <p className="mt-4 text-xs text-center text-gray-500">
+        {phoneNumber.replace(/\D/g, "").length >= 10 
+          ? "Pressione ENTER para continuar" 
+          : "Digite o número de telefone completo"}
+      </p>
     </div>
   );
 };
