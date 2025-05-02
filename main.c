@@ -17,6 +17,7 @@
 typedef enum {
     STATE_PORTFOLIO,
     STATE_PHONE_INPUT,
+    STATE_CONFIRMATION,  // Nova tela de confirmação
     STATE_AUTH,
     STATE_PROCESSING,
     STATE_SUCCESS,
@@ -45,6 +46,7 @@ char carrierName[10] = "";
 // Protótipos de funções
 void DisplayPortfolioScreen(void);
 void DisplayPhoneInputScreen(void);
+void DisplayConfirmationScreen(void);  // Nova função
 void DisplayAuthScreen(void);
 void DisplayProcessingScreen(void);
 void DisplaySuccessScreen(void);
@@ -72,6 +74,10 @@ int main(void) {
                 
             case STATE_PHONE_INPUT:
                 DisplayPhoneInputScreen();
+                break;
+                
+            case STATE_CONFIRMATION:  // Nova tela de confirmação
+                DisplayConfirmationScreen();
                 break;
                 
             case STATE_AUTH:
@@ -317,11 +323,11 @@ void DisplayPhoneInputScreen(void) {
             currentState = STATE_PORTFOLIO;
             return;
         } else if (key == XUI_KEY_GREEN || key == XUI_KEY_ENTER) {
-            // Avançar para a autenticação se o número tiver pelo menos 10 dígitos
+            // Avançar para a tela de confirmação se o número tiver pelo menos 10 dígitos
             if (cursorPos >= 10) {
                 // Guardar o número completo
                 strcpy(phoneNumber, numericPhone);
-                currentState = STATE_AUTH;
+                currentState = STATE_CONFIRMATION;  // Vamos para a tela de confirmação agora
                 return;
             } else {
                 // Mostrar erro se o número não estiver completo
@@ -331,6 +337,76 @@ void DisplayPhoneInputScreen(void) {
                 XuiRefresh(); // Atualizar a tela para mostrar o erro
                 DelayMs(2000); // Mostrar mensagem por 2 segundos
             }
+        }
+    }
+}
+
+/**
+ * Exibe a tela de confirmação do número e operadora
+ */
+void DisplayConfirmationScreen(void) {
+    int key;
+    char maskedPhone[15];
+    
+    // Aplicar máscara ao número de telefone
+    ApplyPhoneMask(maskedPhone, phoneNumber);
+    
+    // Detectar operadora novamente para garantir
+    DetectCarrier(phoneNumber);
+    
+    while (1) {
+        // Limpar a tela
+        XuiClearArea(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        
+        // Exibir título
+        XuiSetForeColor(XUI_COLOR_BLUE);
+        XuiSetBgColor(XUI_COLOR_WHITE);
+        XuiSetLineWidth(2);
+        XuiDrawText(SCREEN_WIDTH/2, 20, "CONFIRME OS DADOS", XUI_TEXT_CENTER);
+        XuiSetLineWidth(1);
+        
+        // Exibir valor selecionado
+        XuiSetForeColor(XUI_COLOR_BLACK);
+        XuiDrawText(SCREEN_WIDTH/2, 45, rechargeValues[selectedValueIndex], XUI_TEXT_CENTER);
+        
+        // Exibir caixa de confirmação
+        XuiDrawRect(10, 70, SCREEN_WIDTH - 20, 150);
+        
+        // Exibir informações para confirmação
+        XuiSetForeColor(XUI_COLOR_BLACK);
+        XuiDrawText(30, 90, "Número:", XUI_TEXT_LEFT);
+        XuiSetForeColor(XUI_COLOR_BLUE);
+        XuiDrawText(SCREEN_WIDTH - 30, 90, maskedPhone, XUI_TEXT_RIGHT);
+        
+        XuiSetForeColor(XUI_COLOR_BLACK);
+        XuiDrawText(30, 120, "Operadora:", XUI_TEXT_LEFT);
+        XuiSetForeColor(XUI_COLOR_BLUE);
+        XuiDrawText(SCREEN_WIDTH - 30, 120, carrierName, XUI_TEXT_RIGHT);
+        
+        XuiSetForeColor(XUI_COLOR_BLACK);
+        XuiDrawText(30, 150, "Valor:", XUI_TEXT_LEFT);
+        XuiSetForeColor(XUI_COLOR_BLUE);
+        XuiDrawText(SCREEN_WIDTH - 30, 150, rechargeValues[selectedValueIndex], XUI_TEXT_RIGHT);
+        
+        // Exibir mensagem de confirmação
+        XuiSetForeColor(XUI_COLOR_BLACK);
+        XuiDrawText(SCREEN_WIDTH/2, 190, "Confirma estes dados?", XUI_TEXT_CENTER);
+        
+        // Exibir instruções
+        XuiDrawText(10, SCREEN_HEIGHT - 60, "[VERMELHO]: Não", XUI_TEXT_LEFT);
+        XuiDrawText(SCREEN_WIDTH - 10, SCREEN_HEIGHT - 60, "[VERDE]: Sim", XUI_TEXT_RIGHT);
+        
+        // Capturar tecla
+        key = XuiGetKey();
+        
+        if (key == XUI_KEY_RED || key == XUI_KEY_CANCEL) {
+            // Voltar para a tela de entrada de telefone
+            currentState = STATE_PHONE_INPUT;
+            return;
+        } else if (key == XUI_KEY_GREEN || key == XUI_KEY_ENTER) {
+            // Avançar para a autenticação
+            currentState = STATE_AUTH;
+            return;
         }
     }
 }
